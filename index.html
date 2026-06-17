@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Ulang Tahun, Cintaku ❤️</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Dancing Script & Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Latar belakang gradient yang lebih lembut dan elegan */
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%, #fbc2eb 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, .romantic-font {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Animations */
+        @keyframes pulse-heart {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); drop-shadow: 0 0 15px rgba(255,105,180,0.8); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse { animation: pulse-heart 2s infinite ease-in-out; }
+
+        @keyframes float-up {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        .floating-heart {
+            position: fixed;
+            color: rgba(255, 77, 109, 0.4);
+            animation: float-up 6s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fade-in-up 1.2s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.5s; }
+        .delay-2 { animation-delay: 1s; }
+        .delay-3 { animation-delay: 1.5s; }
+        .delay-4 { animation-delay: 2s; }
+        .delay-5 { animation-delay: 2.5s; }
+
+        /* Slideshow Styles */
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+            border: 4px solid white;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out, transform 5s ease-in-out;
+            transform: scale(1);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1.05); /* Efek zoom perlahan (Ken Burns) */
+        }
+
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(255, 182, 193, 0.2);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #ffb6c1; border-radius: 10px; }
+        
+        /* Music Control */
+        #music-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            transition: all 0.3s;
+        }
+        .music-spin { animation: spin 4s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="relative flex items-center justify-center text-gray-800">
+
+    <!-- Background Audio (Siapkan file lagu-romantis.mp3) -->
+    <audio id="bg-music" loop>
+        <source src="lagu-romantis.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div id="hearts-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- Music Toggle Button (Hidden initially) -->
+    <button id="music-btn" class="hidden bg-white/80 backdrop-blur-md border border-pink-200 text-pink-500 p-3 rounded-full shadow-lg hover:scale-110" onclick="toggleMusic()">
+        <i class="fa-solid fa-music music-spin" id="music-icon"></i>
+    </button>
+
+    <!-- WELCOME SCREEN -->
+    <div id="welcome-screen" class="relative z-10 flex flex-col items-center justify-center min-h-screen w-full p-6 transition-opacity duration-1000">
+        <div class="glass-card rounded-3xl p-8 md:p-12 text-center max-w-md w-full shadow-2xl transform transition-transform hover:scale-105 duration-500">
+            <i class="fa-solid fa-envelope-open-heart text-6xl text-rose-500 mb-6 pulse"></i>
+            <h1 class="text-4xl md:text-5xl font-bold text-rose-600 mb-4 romantic-font">Hai, Cintaku!</h1>
+            <p class="text-gray-600 mb-8 font-light text-sm md:text-base">Ada sebuah pesan yang teramat spesial untukmu hari ini. Siapkan hatimu, dan buka pelan-pelan ya...</p>
+            <button onclick="openGift()" class="bg-gradient-to-r from-rose-500 to-pink-400 text-white font-semibold py-3 px-8 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.5)] hover:shadow-[0_0_25px_rgba(244,63,94,0.7)] hover:scale-110 transition-all duration-300">
+                Buka Kado <i class="fa-solid fa-gift ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT SCREEN -->
+    <div id="main-content" class="hidden relative z-10 flex-col items-center justify-center min-h-screen w-full p-4 md:p-8 py-12">
+        <div class="glass-card rounded-3xl p-6 md:p-10 text-center max-w-3xl w-full mx-auto shadow-2xl">
+            
+            <!-- HEADER -->
+            <div class="fade-in">
+                <p class="text-gray-500 tracking-widest text-sm uppercase font-semibold mb-2">Sebuah Perayaan Cinta</p>
+                <h1 class="text-5xl md:text-6xl font-bold text-rose-600 mb-2 romantic-font mt-2">Happy 62nd Birthday</h1>
+                <h2 class="text-3xl md:text-4xl text-pink-500 mb-8 romantic-font">Sayangku ❤️</h2>
+            </div>
+
+            <!-- ANIMATED PHOTO GALLERY (SLIDESHOW) -->
+            <div class="fade-in delay-1 relative w-56 h-56 md:w-64 md:h-64 mx-auto mb-10">
+                <div class="absolute inset-0 bg-rose-200 rounded-full animate-pulse blur-lg transform scale-110"></div>
+                
+                <div class="slideshow-container relative z-10">
+                    <!-- Ganti foto-1.jpg, foto-2.jpg, foto-3.jpg dengan foto kalian -->
+                    <img src="foto-1.jpg" onerror="this.src='https://placehold.co/400x400/ffb6c1/ffffff?text=Foto+Kenangan+1'" class="slide active" alt="Kenangan 1">
+                    <img src="foto-2.jpg" onerror="this.src='https://placehold.co/400x400/ff99aa/ffffff?text=Foto+Kenangan+2'" class="slide" alt="Kenangan 2">
+                    <img src="foto-3.jpg" onerror="this.src='https://placehold.co/400x400/ff6b81/ffffff?text=Foto+Kenangan+3'" class="slide" alt="Kenangan 3">
+                </div>
+                
+                <i class="fa-solid fa-heart absolute -bottom-4 -right-4 text-4xl text-red-500 z-20 drop-shadow-lg pulse"></i>
+                <i class="fa-solid fa-sparkles absolute -top-2 -left-2 text-2xl text-yellow-500 z-20 drop-shadow-md"></i>
+            </div>
+
+            <!-- MAIN ROMANTIC MESSAGE -->
+            <div class="fade-in delay-2 bg-gradient-to-br from-white/80 to-white/40 rounded-2xl p-6 md:p-8 mb-10 shadow-sm border border-white/80">
+                <p class="text-gray-800 leading-relaxed md:text-lg text-justify md:text-center italic font-medium">
+                    "Selamat ulang tahun ke-62 nggih, sayangku. Di usia yang semakin bertambah ini, rasa syukurku memilikimu justru semakin mendalam, merasuk ke setiap palung jiwaku. Semoga Allah senantiasa memberikanmu kesehatan yang paripurna, kekuatan di setiap langkah, rezeki yang barokah, dan mengabulkan segala doa yang kau panjatkan. Semoga engkau selalu dalam lindungan Allah. <br><br>
+                    Ketahuilah, cintaku padamu tiada habisnya, yang. Meski waktu terus berjalan dan dunia terus menua, cintaku akan selalu utuh dan muda untukmu. Terima kasih sudah selalu mencintai saya dengan hati yang begitu tulus, dan menjadi tempat pulang paling nyaman untukku dari segala lelahnya dunia. <br><br>
+                    <strong class="text-rose-600 font-bold not-italic block mt-4 text-xl">I Love You, Sayangku.</strong>"
+                </p>
+            </div>
+
+            <!-- 4 HAL YANG TAK BERUBAH -->
+            <div class="fade-in delay-3 mb-10">
+                <h3 class="font-semibold text-rose-500 mb-6 romantic-font text-3xl">4 Hal yang Tak Pernah Berubah Darimu:</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
+                    
+                    <div class="bg-white/80 p-5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex items-start space-x-4 border border-rose-50">
+                        <div class="bg-rose-100 p-3 rounded-full text-rose-500 flex-shrink-0">
+                            <i class="fa-solid fa-face-laugh-squint text-xl w-6 h-6 flex items-center justify-center"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 text-lg">Canda Tawamu</h4>
+                            <p class="text-sm text-gray-600 mt-1">Tawa renyahmu selalu menjadi melodi terindah yang menghapus segala gundah dan lelahku.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/80 p-5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex items-start space-x-4 border border-rose-50">
+                        <div class="bg-rose-100 p-3 rounded-full text-rose-500 flex-shrink-0">
+                            <i class="fa-solid fa-heart-circle-check text-xl w-6 h-6 flex items-center justify-center"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 text-lg">Cintamu</h4>
+                            <p class="text-sm text-gray-600 mt-1">Cinta tulus yang tak pernah pudar, selalu menghangatkanku di setiap hembusan napas.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/80 p-5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex items-start space-x-4 border border-rose-50">
+                        <div class="bg-rose-100 p-3 rounded-full text-rose-500 flex-shrink-0">
+                            <i class="fa-solid fa-hand-holding-heart text-xl w-6 h-6 flex items-center justify-center"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 text-lg">Ketulusanmu</h4>
+                            <p class="text-sm text-gray-600 mt-1">Caramu menyayangiku tanpa syarat, menjadikanku orang paling beruntung di dunia.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/80 p-5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex items-start space-x-4 border border-rose-50">
+                        <div class="bg-rose-100 p-3 rounded-full text-rose-500 flex-shrink-0">
+                            <i class="fa-solid fa-hand-sparkles text-xl w-6 h-6 flex items-center justify-center"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 text-lg">Kepedulianmu</h4>
+                            <p class="text-sm text-gray-600 mt-1">Perhatian kecilmu yang tak pernah putus, selalu memastikan aku senantiasa baik-baik saja.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- THE ETERNITY MESSAGE (Deeply emotional closing) -->
+            <div class="fade-in delay-4 bg-rose-50 rounded-2xl p-6 border-l-4 border-rose-400 text-left relative overflow-hidden">
+                <i class="fa-solid fa-quote-left absolute top-2 left-2 text-4xl text-rose-200 opacity-50 z-0"></i>
+                <p class="relative z-10 text-gray-700 text-sm md:text-base font-medium">
+                    "Hingga hela napas ini mereda, hingga detak waktu enggan bersuara, engkau akan senantiasa menjadi satu-satunya dermaga tempat rinduku berlabuh. Tiada henti kurapal syukur ke hadirat Allah yang telah menenun takdir, mengizinkanku menyusuri jalan waktu bersamamu, merengkuhmu dalam kasih yang tak berbilang usia, dan menjadi pelita yang senantiasa mendampingi langkahmu. Selamat merayakan hari kelahiran, wahai bait terindah yang menyempurnakan sajak kehidupanku."
+                </p>
+            </div>
+
+            <div class="fade-in delay-5 mt-10 border-t border-rose-200 pt-8">
+                <button onclick="moreLove()" class="bg-rose-500 text-white border border-rose-400 font-semibold py-3 px-8 rounded-full hover:bg-rose-600 hover:shadow-lg transition-all transform hover:scale-105 mb-4 pulse">
+                    Klik Untuk Memelukku dari Jauh <i class="fa-solid fa-hands-holding-circle ml-2"></i>
+                </button>
+                <p class="text-xs text-gray-500 mt-4 tracking-wider">HANYA UNTUKMU ❤️ SELAMANYA</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Floating Hearts Logic
+        function createFloatingHearts() {
+            const container = document.getElementById('hearts-container');
+            const heartCount = 20; 
+
+            for (let i = 0; i < heartCount; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('i');
+                    heart.className = 'fa-solid fa-heart floating-heart';
+                    
+                    const leftPos = Math.random() * 100;
+                    const size = Math.random() * 25 + 10;
+                    const duration = Math.random() * 5 + 5;
+                    const delay = Math.random() * 5;
+
+                    heart.style.left = `${leftPos}vw`;
+                    heart.style.fontSize = `${size}px`;
+                    heart.style.animationDuration = `${duration}s`;
+                    heart.style.animationDelay = `${delay}s`;
+
+                    container.appendChild(heart);
+                }, i * 300);
+            }
+        }
+
+        window.onload = createFloatingHearts;
+
+        // Music Logic
+        const bgMusic = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-btn');
+        const musicIcon = document.getElementById('music-icon');
+        let isMusicPlaying = false;
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicIcon.classList.remove('music-spin');
+                musicIcon.classList.remove('fa-music');
+                musicIcon.classList.add('fa-volume-xmark');
+            } else {
+                bgMusic.play().catch(e => console.log("Audio play failed: ", e));
+                musicIcon.classList.add('music-spin');
+                musicIcon.classList.remove('fa-volume-xmark');
+                musicIcon.classList.add('fa-music');
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        // Slideshow Logic
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function startSlideshow() {
+            if(slides.length <= 1) return; // Skip if only 1 photo
+            
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 3500); // Ganti foto setiap 3.5 detik
+        }
+
+        // Open Gift Logic
+        function openGift() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const mainContent = document.getElementById('main-content');
+
+            welcomeScreen.style.opacity = '0';
+            
+            // Try to play music on user interaction
+            toggleMusic();
+            musicBtn.classList.remove('hidden');
+
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+                mainContent.style.display = 'flex';
+                
+                fireConfetti();
+                startSlideshow();
+                window.scrollTo(0, 0);
+            }, 800);
+        }
+
+        // Confetti Logic
+        function fireConfetti() {
+            var duration = 4 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                
+                confetti(Object.assign({}, defaults, { 
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#ffb6c1', '#ff69b4', '#ff1493', '#ffffff']
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#ffb6c1', '#ff69b4', '#ff1493', '#ffffff']
+                }));
+            }, 250);
+        }
+
+        // "Peluk dari jauh" Button Logic
+        function moreLove() {
+            const defaults = {
+                spread: 360,
+                ticks: 100,
+                gravity: 0.5,
+                decay: 0.94,
+                startVelocity: 30,
+                shapes: ['heart'],
+                colors: ['#FF0000', '#FF69B4', '#FF1493']
+            };
+
+            // Heart burst in center
+            confetti({
+                ...defaults,
+                origin: { y: 0.5 },
+                particleCount: 75,
+                scalar: 2
+            });
+
+            setTimeout(() => {
+                confetti({
+                    ...defaults,
+                    origin: { y: 0.5 },
+                    particleCount: 25,
+                    scalar: 3
+                });
+            }, 200);
+        }
+    </script>
+</body>
+</html>
