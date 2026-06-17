@@ -126,7 +126,7 @@
 <body class="relative flex items-center justify-center text-gray-800">
 
     <!-- Background Audio (Siapkan file lagu-romantis.mp3) -->
-    <audio id="bg-music" loop>
+    <audio id="bg-music" loop autoplay>
         <source src="lagu-romantis.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
@@ -297,10 +297,33 @@
                 musicIcon.classList.add('fa-music');
             }
             isMusicPlaying = !isMusicPlaying;
-        }
+    }
 
-        // Slideshow Logic
-        let currentSlide = 0;
+    // Trik Autoplay: Mencoba memutar musik saat halaman dimuat atau saat layar disentuh
+    function forcePlayMusic() {
+        if (!isMusicPlaying) {
+            let playPromise = bgMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    isMusicPlaying = true;
+                    musicIcon.classList.add('music-spin');
+                    musicIcon.classList.remove('fa-volume-xmark');
+                    musicIcon.classList.add('fa-music');
+                }).catch(error => {
+                    console.log("Autoplay diblokir oleh browser. Menunggu interaksi pengguna (sentuhan layar).");
+                });
+            }
+        }
+    }
+
+    // Coba putar otomatis saat web baru dimuat
+    window.addEventListener('load', forcePlayMusic);
+    // Jika diblokir oleh browser, putar seketika saat layar disentuh di area mana pun
+    document.body.addEventListener('click', forcePlayMusic, { once: true });
+    document.body.addEventListener('touchstart', forcePlayMusic, { once: true });
+
+    // Slideshow Logic
+    let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         
         function startSlideshow() {
